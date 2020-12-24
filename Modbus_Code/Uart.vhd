@@ -2,7 +2,7 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date:    18:46:45 07/23/2019 
+-- Create Date:   
 -- Design Name: 
 -- Module Name:    Uart - Behavioral 
 -- Project Name: 
