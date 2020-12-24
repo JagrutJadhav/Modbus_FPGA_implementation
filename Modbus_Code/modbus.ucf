@@ -1,0 +1,13 @@
+## System Clock ##
+NET "clk" LOC = P95;
+
+## Asynchronous reset ##
+NET "reset_n" LOC = P104;
+NET "reset_n" CLOCK_DEDICATED_ROUTE = FALSE;
+
+//PIN "reset_n_IBUF_BUFG.O" CLOCK_DEDICATED_ROUTE = FALSE;
+
+
+
+NET "tx" LOC = P111;
+NET "rx" LOC = P105;
