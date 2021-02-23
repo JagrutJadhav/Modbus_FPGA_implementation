@@ -31,22 +31,22 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity Top_level_modbus_master is
   GENERIC(
-		clk_freq		:	INTEGER		:= 24_000_000;	-- frequency of system clock in Hertz
-		baud_rate	:	INTEGER		:= 9600;		   -- data link baud rate in bits/second
-		os_rate		:	INTEGER		:= 16;			-- oversampling rate to find center of receive bits (in samples per baud period)
+		clk_freq		:	INTEGER  	:= 24_000_000;	-- frequency of system clock in Hertz
+		baud_rate		:	INTEGER		:= 9600;		   -- data link baud rate in bits/second
+		os_rate			:	INTEGER		:= 16;			-- oversampling rate to find center of receive bits (in samples per baud period)
 		--d_width		:	INTEGER		:= 8; 			-- data bus width
-		stop_bit		:  INTEGER     := 1;					-- 1 for 2 stop bit, 0 for 1 stop bit
-		parity		:	INTEGER		:= 0;				-- 0 for no parity, 1 for parity
-		parity_eo	:	STD_LOGIC	:= '0');			-- '0' for even, '1' for odd parity
+		stop_bit		:  INTEGER   := 1;					-- 1 for 2 stop bit, 0 for 1 stop bit
+		parity			:	INTEGER		:= 0;				-- 0 for no parity, 1 for parity
+		parity_eo		:	STD_LOGIC	:= '0');			-- '0' for even, '1' for odd parity
   port(		
-       clk				:	in		std_logic;										-- system clock
+    clk					:	in		std_logic;										-- system clock
 		reset_n			:	in		std_logic;										-- reset
 		
 --		slave_address 	: 	in 	std_logic_vector(d_width-1 downto 0) := x"01"; 	-- Slave address
---		function_code	:  in    std_logic_vector(d_width-1 downto 0) := x"01"; 	-- Function code
+--		function_code		:  in    std_logic_vector(d_width-1 downto 0) := x"01"; 	-- Function code
 --		
---		add_hi       :  in    std_logic_vector(d_width-1 downto 0) := x"00"; 	-- Starting address hi 
---		add_lo       :  in    std_logic_vector(d_width-1 downto 0) := x"FF"; 	-- Starting address lo
+--		add_hi       		:  in    std_logic_vector(d_width-1 downto 0) := x"00"; 	-- Starting address hi 
+--		add_lo       		:  in    std_logic_vector(d_width-1 downto 0) := x"FF"; 	-- Starting address lo
 --		
 --		tx_data_hi			:	in		std_logic_vector(d_width-1 downto 0);  -- data to transmit
 --		tx_data_lo			:	in		std_logic_vector(d_width-1 downto 0);  -- data to transmit
@@ -54,10 +54,10 @@ entity Top_level_modbus_master is
 --		crc_low        :  out   std_logic_vector(d_width-1 downto 0);	-- CRC lo
 --		crc_high       :  out   std_logic_vector(d_width-1 downto 0);	-- CRC hi
 		
-		--crc_en 			: 	in 	std_logic;										-- CRC enable
-		--tx_ena			:	in		std_logic;										-- initiate transmission
---		tx_modbus_ena : in std_logic;
---		tx_modbus_end : out std_logic;
+		--crc_en 					: 	in 	std_logic;										-- CRC enable
+		--tx_ena					:	in		std_logic;										-- initiate transmission
+	--		tx_modbus_ena	: in std_logic;
+--		tx_modbus_end 	: out std_logic;
 --		
 		
 --		rx_data			:	out	std_logic_vector(d_width-1 downto 0);	-- data received
@@ -77,54 +77,54 @@ architecture Behavioral of Top_level_modbus_master is
 	component uart
 	GENERIC(
 		clk_freq		:	INTEGER;	   -- frequency of system clock in Hertz
-		baud_rate	:	INTEGER;		-- data link baud rate in bits/second
-		os_rate		:	INTEGER;		-- oversampling rate to find center of receive bits (in samples per baud period)
-		d_width		:	INTEGER;    -- data bus width
+		baud_rate		:	INTEGER;		-- data link baud rate in bits/second
+		os_rate			:	INTEGER;		-- oversampling rate to find center of receive bits (in samples per baud period)
+		d_width			:	INTEGER;    -- data bus width
 		stop_bit		:  INTEGER;	   -- 1 for 2 stop bit, 0 for 1 stop bit
-		parity		:	INTEGER;		-- 0 for no parity, 1 for parity
-		parity_eo	:	STD_LOGIC); -- '0' for even, '1' for odd parity
+		parity			:	INTEGER;		-- 0 for no parity, 1 for parity
+		parity_eo		:	STD_LOGIC); -- '0' for even, '1' for odd parity
 	port(
-		clk : in std_logic;
-		reset_n : in std_logic;
-		tx_ena : in std_logic;
-		tx_data : in std_logic_vector(7 downto 0);
-		rx : in std_logic;          
-		rx_busy : out std_logic;
-		rx_error : out std_logic;
-		rx_data : out std_logic_vector(7 downto 0);
-		tx_busy : out std_logic;
-		tx : out std_logic
+		clk				 : in std_logic;
+		reset_n 	: in std_logic;
+		tx_ena 		: in std_logic;
+		tx_data 	: in std_logic_vector(7 downto 0);
+		rx 				: in std_logic;          
+		rx_busy 	: out std_logic;
+		rx_error 	: out std_logic;
+		rx_data 	: out std_logic_vector(7 downto 0);
+		tx_busy 	: out std_logic;
+		tx 				: out std_logic
 		);
 	end component;
 	
-	constant max571hz: integer := 24000000/142; --time =5.98 ms for 9600 baud
-	signal r_reg2 : integer range 0 to max571hz;
+	constant max571hz	: integer := 24000000/142; --time =5.98 ms for 9600 baud
+	signal r_reg2 		: integer range 0 to max571hz;
 	
-	constant max400hz: integer := 24000000/2000; --time =5.98 ms for 9600 baud
-	signal r_reg1 : integer range 0 to max400hz;
+	constant max400hz	: integer := 24000000/2000; --time =5.98 ms for 9600 baud
+	signal r_reg1 		: integer range 0 to max400hz;
 	
-	signal tx_ena   : std_logic;                      -- transmit enable
-	signal tx_data  : std_logic_vector(7 downto 0);   -- transmit data
-	signal rx_busy  : std_logic;                      -- receive busy
-	signal rx_error : std_logic;                      -- error signal
+	signal tx_ena   	: std_logic;                      -- transmit enable
+	signal tx_data  	: std_logic_vector(7 downto 0);   -- transmit data
+	signal rx_busy  	: std_logic;                      -- receive busy
+	signal rx_error 	: std_logic;                      -- error signal
 	--signal rx_data  : std_logic_vector(7 downto 0);   -- receive data
-	signal tx_busy  : std_logic;                      -- transmit busy
+	signal tx_busy  	: std_logic;                      -- transmit busy
 	
-	signal tx_count1 : integer := 0;
+	signal tx_count1 	: integer := 0;
 	
-	signal state : std_logic_vector(1 downto 0) := "00";
-	signal rst_test : std_logic := '0';
+	signal state 			: std_logic_vector(1 downto 0) := "00";
+	signal rst_test	 	: std_logic := '0';
 	signal test_count : integer := 0;
 	
-	signal data_value1 : std_logic_vector (7 downto 0);
-	signal data_value2 : std_logic_vector (7 downto 0);
-	signal data_value3 : std_logic_vector (7 downto 0);
-	signal data_value4 : std_logic_vector (7 downto 0);
-	signal data_value5 : std_logic_vector (7 downto 0);
-	signal data_value6 : std_logic_vector (7 downto 0);
-	signal data_value7 : std_logic_vector (7 downto 0);
-	signal data_value8 : std_logic_vector (7 downto 0);
-	signal data_value9 : std_logic_vector (7 downto 0);
+	signal data_value1 	: std_logic_vector (7 downto 0);
+	signal data_value2 	: std_logic_vector (7 downto 0);
+	signal data_value3 	: std_logic_vector (7 downto 0);
+	signal data_value4 	: std_logic_vector (7 downto 0);
+	signal data_value5 	: std_logic_vector (7 downto 0);
+	signal data_value6 	: std_logic_vector (7 downto 0);
+	signal data_value7 	: std_logic_vector (7 downto 0);
+	signal data_value8 	: std_logic_vector (7 downto 0);
+	signal data_value9 	: std_logic_vector (7 downto 0);
 	signal data_value10 : std_logic_vector (7 downto 0);
 	signal data_value11 : std_logic_vector (7 downto 0);
 	
